@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-AttendanceApplication<attendance>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.geofencing.attendance.AttendanceApplication",
+            "projectName": "attendance",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
