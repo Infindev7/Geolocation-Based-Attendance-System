@@ -1,7 +1,6 @@
 package com.geofencing.attendance.student;
 
 import jakarta.persistence.*;
-import java.util.List;
 
 @Entity
 public class Student {
@@ -10,25 +9,35 @@ public class Student {
     private Long id;
 
     private String name;
-
-    @ElementCollection
-    private List<Integer> coords;
+    private Double latitude;
+    private Double longitude;
+    private Double distance; // Optional: store distance if you want
 
     // No-args constructor required by JPA
     public Student() {}
 
     // All-args constructor
-    public Student(Long id, String name, List<Integer> coords) {
+    public Student(Long id, String name, Double latitude, Double longitude, Double distance) {
         this.id = id;
         this.name = name;
-        this.coords = coords;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.distance = distance;
     }
 
     // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
+
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
-    public List<Integer> getCoords() { return coords; }
-    public void setCoords(List<Integer> coords) { this.coords = coords; }
+
+    public Double getLatitude() { return latitude; }
+    public void setLatitude(Double latitude) { this.latitude = latitude; }
+
+    public Double getLongitude() { return longitude; }
+    public void setLongitude(Double longitude) { this.longitude = longitude; }
+
+    public Double getDistance() { return distance; }
+    public void setDistance(Double distance) { this.distance = distance; }
 }
