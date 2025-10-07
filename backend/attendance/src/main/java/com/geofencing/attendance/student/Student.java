@@ -7,19 +7,30 @@ public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String name;
+    private String password;
+
     private Double latitude;
     private Double longitude;
     private Double distance; // Optional: store distance if you want
 
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+    
     // No-args constructor required by JPA
     public Student() {}
 
     // All-args constructor
-    public Student(Long id, String name, Double latitude, Double longitude, Double distance) {
+    public Student(Long id, String name, String password, Double latitude, Double longitude, Double distance) {
         this.id = id;
         this.name = name;
+        this.password = password;
         this.latitude = latitude;
         this.longitude = longitude;
         this.distance = distance;

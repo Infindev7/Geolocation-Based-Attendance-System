@@ -47,10 +47,10 @@ export class User extends Component {
             const distance = haversineDistance(lat1, lon1, lat2, lon2);
             this.setState({ distance }, () => {
                 // Mark attendance if within 60m 
-                if (distance <= 60) {
+                if (distance <= 105) {
                     this.setState({ attendance: true }, () => {
                       // Send POST request after attendance is marked
-                      axios.post('/api/addLoc', {
+                      axios.post('http://localhost:8080/api/addLoc', {
                         name: this.state.name,
                         latitude: this.state.location.latitude,
                         longitude: this.state.location.longitude,
