@@ -1,10 +1,19 @@
 import './App.css'
-import Parent from './components/Parent'
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Login from './components/Login';
+import Details from './components/user/Details';
+import User from './components/user/User';
 
 function App() {
   return (
-    <Parent />
-  )
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/details" element={<Details />} />
+        <Route path="/user" element={<User />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
