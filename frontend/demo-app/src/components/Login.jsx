@@ -1,64 +1,68 @@
 import axios from 'axios'
 import React, { useState } from 'react'
+import { useNavigate, Link } from 'react-router-dom'
+import './Login.css';
 
 function Login() {
 
-    const [id, setId] = useState(0)
-    const [username, setUsername] = useState("")
+    const [id, setId] = useState("")
     const [password, setPassword] = useState("")
+    const nav = useNavigate()
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        console.log('Username: ' + username);
-        console.log('Password: ' + password);
         
-        axios.post("http://localhost:8080/api/login",{
-            id: id,
-            username: username,
-            password: password
-        }).then(() => {
-            alert("Successfully Logged In")
+        axios.post("http://localhost:8080/api/login", {
+          id: Number(id),
+          password
+        }).then(res => {
+          const { id: sid, name, passHash } = res.data
+          localStorage.setItem("userData", JSON.stringify({
+            id: sid,
+            name,
+            passHash
+          }))
+          nav("/user")
         }).catch(() => {
-            alert("Invalid Credentials")
+          alert("Invalid Credentials")
         })
 
-        setId(0)
+        setId("")
         setPassword("")
-        setUsername("")
     }
 
     return (
-        <div>
-            <form onSubmit={handleSubmit}>
-                <h2>Login</h2>
-                <div>
-                    <label>Id:</label>
-                    <input 
-                        type="number"
-                        value={id}
-                        onChange={e => setUsername(e.target.value)} 
-                        required
-                    />
-                </div>
-                <div>
-                    <label>Username:</label>
-                    <input 
-                        type="text"
-                        value={username}
-                        onChange={e => setUsername(e.target.value)} 
-                        required
-                    />
-                </div><div>
-                    <label>Password:</label>
-                    <input 
-                        type="text"
-                        value={password}
-                        onChange={e => setPassword(e.target.value)}
-                        required 
-                    />
-                </div>
-                <button type='submit'>Submit</button>
-            </form>
+        <div className="login-container">
+            <div className="login-header">
+                EduTrack
+            </div>
+            <div className="login-form-container">
+                <h2>Welcome Back</h2>
+                <p>Sign in to mark attendance.</p>
+                <form onSubmit={handleSubmit}>
+                    <div className="input-group">
+                        <label>Id</label>
+                        <input 
+                            type="text"
+                            placeholder="Enter your Id"
+                            value={id}
+                            onChange={e => setId(e.target.value)} 
+                            required
+                        />
+                    </div>
+                    <div className="input-group">
+                        <label>Password</label>
+                        <input 
+                            type="password"
+                            placeholder="Enter your password"
+                            value={password}
+                            onChange={e => setPassword(e.target.value)}
+                            required 
+                        />
+                    </div>
+                    <button type='submit' className="login-button">Login</button>
+                </form>
+            </div>
         </div>
     )
 }

@@ -1,0 +1,113 @@
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+      sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: #f0f2f5;
+}
+
+.login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+.login-header {
+    position: absolute;
+    top: 20px;
+    left: 40px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #0d6efd;
+}
+
+.login-header .logo {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    background-color: #0d6efd;
+    margin-right: 8px;
+    /* A simple square, you can replace this with an actual logo/icon */
+}
+
+
+.login-form-container {
+    background: #fff;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 100%;
+    max-width: 400px;
+}
+
+.login-form-container h2 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 28px;
+    color: #1c1e21;
+}
+
+.login-form-container p {
+    margin-bottom: 30px;
+    color: #606770;
+}
+
+.input-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #606770;
+    font-weight: 600;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #dddfe2;
+    border-radius: 6px;
+    font-size: 16px;
+    box-sizing: border-box;
+    background-color: #fff;
+    color: #1c1e21;
+}
+
+.login-button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    background-color: #0d6efd;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.login-button:hover {
+    background-color: #0b5ed7;
+}
+
+.signup-link {
+    margin-top: 20px;
+    color: #606770;
+}
+
+.signup-link a {
+    color: #0d6efd;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.signup-link a:hover {
+    text-decoration: underline;
+}

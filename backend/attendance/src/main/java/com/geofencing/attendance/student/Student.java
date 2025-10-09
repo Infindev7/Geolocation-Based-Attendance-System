@@ -13,7 +13,15 @@ public class Student {
     private Double latitude;
     private Double longitude;
     private Double distance; // Optional: store distance if you want
+    private String passHash;
 
+    public String getPassHash() {
+        return passHash;
+    }
+
+    public void setPassHash(String passHash) {
+        this.passHash = passHash;
+    }
 
     public String getPassword() {
         return password;
@@ -27,13 +35,14 @@ public class Student {
     public Student() {}
 
     // All-args constructor
-    public Student(Long id, String name, String password, Double latitude, Double longitude, Double distance) {
+    public Student(Long id, String name, String password, Double latitude, Double longitude, Double distance, String passHash) {
         this.id = id;
         this.name = name;
         this.password = password;
         this.latitude = latitude;
         this.longitude = longitude;
         this.distance = distance;
+        this.passHash = passHash;
     }
 
     // Getters and Setters
