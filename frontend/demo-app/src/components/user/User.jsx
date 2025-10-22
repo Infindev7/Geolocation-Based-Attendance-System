@@ -1,19 +1,46 @@
-import React, { Component } from 'react'
+import React, { Component, useEffect } from 'react'
 import axios from 'axios'
-import { MapContainer, TileLayer, Marker, Popup, Circle } from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, Popup, Circle, useMap } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
+import './User.css'
 import L from 'leaflet'
+import { FaLocationDot, FaMapLocationDot } from "react-icons/fa6";
+import { TbLocationCheck } from "react-icons/tb";
+
 
 // Fix for default marker icon issue with webpack
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 
+// Helper component to update map view and invalidate size
+function MapUpdater({ center }) {
+  const map = useMap();
+  useEffect(() => {
+    map.setView(center);
+    // A small delay is sometimes needed to ensure the container is sized correctly
+    setTimeout(() => {
+      map.invalidateSize();
+    }, 100);
+  }, [center, map]);
+  return null;
+}
+
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
     iconRetinaUrl: markerIcon2x,
     iconUrl: markerIcon,
     shadowUrl: markerShadow,
+});
+
+// Define a new icon for the user's location (e.g., red)
+const userIcon = new L.Icon({
+    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
 });
 
 const CAMPUS_COORDS = [19.384200, 72.828824];
@@ -97,20 +124,23 @@ export class User extends Component {
             CAMPUS_COORDS[1]
           )
           this.setState({ distance }, () => {
-            if (distance <= CAMPUS_RADIUS) {
-              this.setState({ attendance: true })
-              axios.post('http://localhost:8080/api/addLoc', {
-                id: this.stored.id,
-                passHash: this.stored.passHash,
-                latitude: location.latitude,
-                longitude: location.longitude,
-                distance: distance
-              }).catch(err => console.error("Send loc error", err))
-              .finally(() => this.setState({ loading: false }))
-            } else {
-              // Outside bounds
-              this.setState({ loading: false })
-            }
+            // Always send location update to the server, even if out of bounds
+            axios.put('http://localhost:8080/api/addLoc', {
+              id: this.stored.id,
+              passHash: this.stored.passHash,
+              latitude: location.latitude,
+              longitude: location.longitude,
+              distance: distance
+            }).then(res => {
+              const saved = res?.data?.saved === true
+              const isInside = distance <= CAMPUS_RADIUS
+              // mark attendance only if the student is inside campus AND server saved the record
+              this.setState({ attendance: saved && isInside })
+            }).catch(err => {
+              console.error("Send loc error", err)
+              // ensure attendance is false on error
+              this.setState({ attendance: false })
+            }).finally(() => this.setState({ loading: false }))
           })
         })
       },
@@ -133,70 +163,89 @@ export class User extends Component {
     const mapCenter = userPosition || CAMPUS_COORDS;
 
     return (
-      <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
-        <h1>Hi {this.state.name}!</h1>
+      <div className="user-page-container">
+        <div className="login-header">
+                <TbLocationCheck /> EduTrack
+        </div>
+        <div className="info-panel">
+          <h1>Hi {this.state.name}!</h1>
 
-        <button
-          onClick={this.handleCheckAttendance}
-          disabled={this.state.loading || !this.state.authOk}
-          style={{ marginBottom: '1rem', padding: '10px 15px', fontSize: '16px' }}
-        >
-          {this.state.loading ? 'Checking...' : 'Check Attendance'}
-        </button>
-
-        {this.state.location ? (
-          <p>
-            Latitude: {this.state.location.latitude.toFixed(4)}<br />
-            Longitude: {this.state.location.longitude.toFixed(4)}
-          </p>
-        ) : (
-          <p>Click the button to get your location.</p>
-        )}
-
-        {this.state.distance !== null && (
-          <p>Distance from campus center: {this.state.distance.toFixed(2)} meters</p>
-        )}
-
-        {this.state.authOk && !this.state.loading && this.state.distance !== null && (
-          this.state.attendance
-            ? <h3 style={{ color: 'green' }}>Attendance marked! You are within the campus bounds.</h3>
-            : <h3 style={{ color: 'red' }}>Out of campus bounds.</h3>
-        )}
-
-        <div style={{ height: '400px', width: '80%', marginTop: '2rem' }}>
-          <MapContainer 
-            center={mapCenter} 
-            zoom={17} 
-            scrollWheelZoom={true}
-            style={{ height: '100%', width: '100%' }}
-            key={mapCenter.join('_')} // Force re-render when center changes
-          >
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
+          <div className='info-location'>
             
-            {/* Campus Location and Radius */}
-            <Circle
-              center={CAMPUS_COORDS}
-              pathOptions={{ color: 'green', fillColor: 'green' }}
-              radius={CAMPUS_RADIUS}
-            />
-            <Marker position={CAMPUS_COORDS}>
-              <Popup>
-                Campus Center
-              </Popup>
-            </Marker>
+              {this.state.location ? (
+                <div className='coords'>
+                  <h1><FaLocationDot /></h1>
+                  <p>
+                    Latitude: {this.state.location.latitude.toFixed(4)}<br />
+                    Longitude: {this.state.location.longitude.toFixed(4)}
+                  </p>
+                </div>
+              ) : (
+                <p>Click the button to get your location and mark attendance.</p>
+              )}
+            
 
-            {/* User Location */}
-            {userPosition && (
-              <Marker position={userPosition}>
+            
+              {this.state.distance !== null && (
+                <div className='dist'>
+                  <h1><FaMapLocationDot /></h1><p>Distance: <strong>{this.state.distance.toFixed(2)} meters</strong></p>
+                </div>
+              )}
+            
+            
+          </div>
+
+          <button
+            onClick={this.handleCheckAttendance}
+            disabled={this.state.loading || !this.state.authOk}
+            className="attendance-button"
+          >
+            {this.state.loading ? 'Checking...' : 'Check Attendance'}
+          </button>
+
+          {this.state.authOk && !this.state.loading && this.state.distance !== null && (
+            this.state.attendance
+              ? <h3 className="status-message success">Attendance marked! You are within the campus bounds.</h3>
+              : <h3 className="status-message error">Out of campus bounds.</h3>
+          )}
+        </div>
+
+        <div className="map-panel">
+          <div className="map-container-wrapper">
+            <MapContainer 
+              center={mapCenter} 
+              zoom={17} 
+              scrollWheelZoom={true}
+              style={{ height: '100%', width: '100%' }}
+            >
+              <MapUpdater center={mapCenter} />
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+              
+              {/* Campus Location and Radius */}
+              <Circle
+                center={CAMPUS_COORDS}
+                pathOptions={{ color: 'green', fillColor: 'green' }}
+                radius={CAMPUS_RADIUS}
+              />
+              <Marker position={CAMPUS_COORDS}>
                 <Popup>
-                  Your Location
+                  Campus Center
                 </Popup>
               </Marker>
-            )}
-          </MapContainer>
+
+              {/* User Location */}
+              {userPosition && (
+                <Marker position={userPosition} icon={userIcon}>
+                  <Popup>
+                    Your Location
+                  </Popup>
+                </Marker>
+              )}
+            </MapContainer>
+          </div>
         </div>
       </div>
     )

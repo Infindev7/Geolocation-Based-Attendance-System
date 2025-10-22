@@ -7,10 +7,11 @@ import com.geofencing.attendance.student.Student;
 
 public interface StudentService {
     public List<Student> getAllStudents();
-    public Student saveStudent(Student student);
+    public boolean saveStudent(Student student);
     public Student getStudentById(Long id);
     public boolean checkPassword(Student student);
     public String getPassHash(Student student);
+    public List<Student> getPresentStudents();
 
     // NEW
     String createAndStoreSessionToken(Long id);

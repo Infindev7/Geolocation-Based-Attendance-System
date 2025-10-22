@@ -20,4 +20,16 @@ public class Admin {
     public Admin(String password) {
         this.password = password;
     }
+
+    // JPA requires a no-argument constructor. Making it protected to limit visibility.
+    protected Admin() {
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 }

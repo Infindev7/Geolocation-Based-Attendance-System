@@ -39,8 +39,10 @@ public class StudentServiceImplementation implements StudentService {
     }
 
     @Override
-    public Student saveStudent(Student student) {
-        // Preserve existing hash on updates
+    public boolean saveStudent(Student student) {
+        if (student == null) return false;
+
+        // Preserve existing hash on updates when password is not provided
         if (student.getId() != null) {
             studentRepository.findById(student.getId()).ifPresent(existing -> {
                 if (student.getPassword() == null || student.getPassword().isBlank()) {
@@ -48,11 +50,19 @@ public class StudentServiceImplementation implements StudentService {
                 }
             });
         }
-        // Only encode raw passwords
-        if (student.getPassword() != null && !student.getPassword().isBlank() && !isBcrypt(student.getPassword())) {
+
+        // Require a password (either incoming or preserved from existing record)
+        if (student.getPassword() == null || student.getPassword().isBlank()) {
+            return false;
+        }
+
+        // Only encode raw passwords (skip if already bcrypt)
+        if (!isBcrypt(student.getPassword())) {
             student.setPassword(passwordEncoder.encode(student.getPassword()));
         }
-        return studentRepository.save(student);
+
+        studentRepository.save(student);
+        return true;
     }
 
     @Override
@@ -99,5 +109,10 @@ public class StudentServiceImplementation implements StudentService {
     @Override
     public Optional<Student> findById(Long id) {
         return studentRepository.findById(id);
+    }
+
+    @Override
+    public List<Student> getPresentStudents() {
+        return studentRepository.findByDistanceIsNotNullAndDistanceLessThan(105.0);
     }
 }

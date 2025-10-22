@@ -1,8 +1,12 @@
 package com.geofencing.attendance.student.repository;
 
-import com.geofencing.attendance.student.Student;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
+import com.geofencing.attendance.student.Student;
 
 public interface StudentRepository extends JpaRepository<Student, Long> {
-    // Add custom query methods 
+
+    // return students with non-null distance and distance < provided value
+    List<Student> findByDistanceIsNotNullAndDistanceLessThan(Double distance);
+
 }

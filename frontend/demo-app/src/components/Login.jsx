@@ -1,6 +1,7 @@
 import axios from 'axios'
 import React, { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
+import { TbLocationCheck } from "react-icons/tb";
 import './Login.css';
 
 function Login() {
@@ -34,7 +35,7 @@ function Login() {
     return (
         <div className="login-container">
             <div className="login-header">
-                EduTrack
+                <TbLocationCheck /> EduTrack
             </div>
             <div className="login-form-container">
                 <h2>Welcome Back</h2>

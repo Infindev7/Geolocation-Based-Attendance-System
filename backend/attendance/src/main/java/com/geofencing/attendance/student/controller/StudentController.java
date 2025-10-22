@@ -69,7 +69,7 @@ public class StudentController {
     }
 
     // SECURED addLoc: require id + passHash with location payload
-    @PostMapping("/api/addLoc")
+    @PutMapping("/api/addLoc")
     public ResponseEntity<?> addLocation(@RequestBody Map<String, Object> body) {
         try {
             Long id = body.get("id") == null ? null : Long.valueOf(body.get("id").toString());
@@ -90,8 +90,12 @@ public class StudentController {
             s.setLatitude(latitude);
             s.setLongitude(longitude);
             s.setDistance(distance);
-            studentService.saveStudent(s); // will not re-encode password (since null)
-            return ResponseEntity.ok(Map.of("saved", true));
+            boolean saved = studentService.saveStudent(s); // save returns boolean
+            if (saved) {
+                return ResponseEntity.ok(Map.of("saved", true));
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("saved", false));
+            }
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Bad payload");
         }
@@ -103,13 +107,15 @@ public class StudentController {
         return ResponseEntity.ok(
                 studentService.getAllStudents()
                         .stream()
-                        .map(s -> Map.of(
-                                "id", s.getId(),
-                                "name", s.getName(),
-                                "latitude", s.getLatitude(),
-                                "longitude", s.getLongitude(),
-                                "distance", s.getDistance()
-                        ))
+                        .map(s -> {
+                            Map<String, Object> studentMap = new java.util.HashMap<>();
+                            studentMap.put("id", s.getId());
+                            studentMap.put("name", s.getName());
+                            studentMap.put("latitude", s.getLatitude());
+                            studentMap.put("longitude", s.getLongitude());
+                            studentMap.put("distance", s.getDistance());
+                            return studentMap;
+                        })
                         .toList()
         );
     }
