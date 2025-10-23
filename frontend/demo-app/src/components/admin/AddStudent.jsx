@@ -9,10 +9,11 @@ function AddStudent() {
     const [name, setName] = useState("")
     const [password, setPassword] = useState("")
     const nav = useNavigate()
+    const apiUrl = import.meta.env.VITE_API_URL
 
     const handleStudent = (e) => {
         e.preventDefault()
-        axios.post("http://localhost:8080/admin/addStudent", {
+        axios.post(`${apiUrl}/admin/addStudent`, {
             name: name,
             password: password
         }).then(() => {

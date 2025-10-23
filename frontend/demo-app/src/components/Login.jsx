@@ -1,5 +1,5 @@
 import axios from 'axios'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { TbLocationCheck } from "react-icons/tb";
 import './Login.css';
@@ -9,11 +9,19 @@ function Login() {
     const [id, setId] = useState("")
     const [password, setPassword] = useState("")
     const nav = useNavigate()
+    const apiUrl = import.meta.env.VITE_API_URL
+
+    useEffect(() => {
+        const userData = JSON.parse(localStorage.getItem("userData") || null)
+        if(userData != null){
+            nav("/user")
+        }
+    })
 
     const handleSubmit = (e) => {
         e.preventDefault()
         
-        axios.post("http://localhost:8080/api/login", {
+        axios.post(`${apiUrl}/api/login`, {
           id: Number(id),
           password
         }).then(res => {

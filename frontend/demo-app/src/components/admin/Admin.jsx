@@ -10,6 +10,7 @@ function Admin() {
   const [admin, setAdmin] = useState(false)
   const [data, setData] = useState([])
   const nav = useNavigate()
+  const apiUrl = import.meta.env.VITE_API_URL
 
   // format distance to 2 decimal places, handle null/invalid values
   const formatDistance = (d) => {
@@ -24,14 +25,14 @@ function Admin() {
       setAdmin(true)
       const fetchData = async () => {
         try {
-          const res = await axios.get("http://localhost:8080/admin/getPresentStudents")
+          const res = await axios.get(`${apiUrl}/admin/getPresentStudents`)
           setPresentData(Array.isArray(res.data) ? res.data : [])
         } catch (err) {
           console.error(err)
         }
 
         try{
-          const res = await axios.get("http://localhost:8080/admin/getAllStudents")
+          const res = await axios.get(`${apiUrl}/admin/getAllStudents`)
           setData(Array.isArray(res.data) ? res.data : [])
         }catch(err) {
           console.error(err)
@@ -45,7 +46,7 @@ function Admin() {
       return () => clearInterval(intervalid)
 
     }
-  }, []) // run once and poll
+  }, [apiUrl]) // run once and poll
 
   function handleAddStudent() {
     nav("/AddStudent")

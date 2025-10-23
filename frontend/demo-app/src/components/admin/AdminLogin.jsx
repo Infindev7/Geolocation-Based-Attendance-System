@@ -19,8 +19,9 @@ function AdminLogin() {
     })
 
     const handleSubmit = (e) => {
+        const apiUrl = import.meta.env.VITE_API_URL
         e.preventDefault()
-        axios.post("http://localhost:8080/api/checkAdmin", {
+        axios.post(`${apiUrl}/api/checkAdmin`, {
             password: password
         }).then(res => {
             const {admin} = res.data

@@ -66,11 +66,12 @@ export class User extends Component {
   }
 
   componentDidMount() {
+    const apiUrl = import.meta.env.VITE_API_URL
     if (!this.stored || !this.stored.passHash) {
       this.setState({ loading: false })
       return
     }
-    axios.post("http://localhost:8080/api/verify", {
+    axios.post(`${apiUrl}/api/verify`, {
       id: this.stored.id,
       passHash: this.stored.passHash
     }).then(res => {
@@ -93,6 +94,7 @@ export class User extends Component {
   }
 
   acquireLocation() {
+    const apiUrl = import.meta.env.VITE_API_URL
     if (!navigator.geolocation) {
       console.error("Geolocation not supported")
       this.setState({ loading: false })
@@ -125,7 +127,7 @@ export class User extends Component {
           )
           this.setState({ distance }, () => {
             // Always send location update to the server, even if out of bounds
-            axios.put('http://localhost:8080/api/addLoc', {
+            axios.put(`${apiUrl}/api/addLoc`, {
               id: this.stored.id,
               passHash: this.stored.passHash,
               latitude: location.latitude,
@@ -153,7 +155,7 @@ export class User extends Component {
 
   render() {
     if (!this.state.authOk && !this.state.loading) {
-      return <h3>Not authorized (hash mismatch or missing)</h3>
+      return <h3 style={{color: "red"}}>Not authorized (hash mismatch or missing)</h3>
     }
 
     const userPosition = this.state.location

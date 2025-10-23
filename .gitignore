@@ -1,1 +1,48 @@
 .vscode/settings.json
+.env
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment/secrets
+.env
+.env.*.local
+
+# IDEs
+.vscode/
+.idea/
+*.iml
+
+# Backend build artifacts (Maven)
+backend/attendance/target/
+backend/attendance/*.jar
+backend/attendance/*.war
+
+# Logs
+*.log
+
+# Node / frontend (if not ignored in frontend folder)
+frontend/demo-app/node_modules/
+frontend/demo-app/dist/
+frontend/demo-app/.vite/
+frontend/demo-app/.cache/
+frontend/demo-app/.env
+
+# Dependencies
+node_modules/
+
+# Build
+dist/
+.vite/
+.build/
+.cache/
+
+# Env
+.env
+.env.*.local
+
+# Logs
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
