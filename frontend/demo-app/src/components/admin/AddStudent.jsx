@@ -1,5 +1,5 @@
 import axios from 'axios'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { TbLocationCheck } from "react-icons/tb"
 import './AddStudent.css'
@@ -10,6 +10,13 @@ function AddStudent() {
     const [password, setPassword] = useState("")
     const nav = useNavigate()
     const apiUrl = import.meta.env.VITE_API_URL
+
+    useEffect(() => {
+        const admin = JSON.parse(localStorage.getItem("admin") || null)
+        if (admin == null){
+            nav("/adminLogin")
+        }
+    })
 
     const handleStudent = (e) => {
         e.preventDefault()
